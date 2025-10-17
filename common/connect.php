@@ -3,7 +3,19 @@
 // https://myrcon.net/topic/162-chat-guid-stats-and-mapstats-logger-1003/
 
 // connect to the stats database
-$BF4stats = @mysqli_connect(HOST, USER, PASS, NAME, PORT) or die ("<title>BF4 Player Stats - Error</title></head><body><div id='pagebody'><div class='subsection'><div class='headline'>Unable to access stats database. Please notify this website's administrator.</div></div><br/><div class='subsection'><div class='headline'>If you are the administrator, please seek assistance <a href='https://myrcon.net/topic/166-bf4-stats-webpage-for-xpkillers-stats-logger-plugin/' target='_blank'>here</a>.</div></div><br/><div class='subsection'><div class='headline'>Error: " . mysqli_connect_error() . "</div></div></div></body></html>");
+$BF4stats = mysqli_init();
+if (!$BF4stats) {
+	die("<title>BF4 Player Stats - Error</title></head><body><div id='pagebody'><div class='subsection'><div class='headline'>Unable to initialize database connection. Please notify this website's administrator.</div></div><br/><div class='subsection'><div class='headline'>If you are the administrator, please seek assistance <a href='https://myrcon.net/topic/166-bf4-stats-webpage-for-xpkillers-stats-logger-plugin/' target='_blank'>here</a>.</div></div></div></body></html>");
+}
+
+// Set SSL/TLS encryption and enable server certificate verification
+mysqli_ssl_set($BF4stats, NULL, NULL, NULL, NULL, NULL);
+mysqli_options($BF4stats, MYSQLI_OPT_SSL_VERIFY_SERVER_CERT, true);
+
+// Connect to the database with SSL
+if (!@mysqli_real_connect($BF4stats, HOST, USER, PASS, NAME, PORT, NULL, MYSQLI_CLIENT_SSL)) {
+	die("<title>BF4 Player Stats - Error</title></head><body><div id='pagebody'><div class='subsection'><div class='headline'>Unable to access stats database. Please notify this website's administrator.</div></div><br/><div class='subsection'><div class='headline'>If you are the administrator, please seek assistance <a href='https://myrcon.net/topic/166-bf4-stats-webpage-for-xpkillers-stats-logger-plugin/' target='_blank'>here</a>.</div></div><br/><div class='subsection'><div class='headline'>Error: " . mysqli_connect_error() . "</div></div></div></body></html>");
+}
 // make sure that the database name wasn't left empty
 if(NAME)
 {
